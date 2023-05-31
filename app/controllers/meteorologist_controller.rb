@@ -1,0 +1,48 @@
+class MeteorologistController < ApplicationController
+  def street_to_weather
+    @street_address = params.fetch("address")
+    
+    maps_key = ENV.fetch("GEOCODING_API_KEY")
+
+    url = "https://maps.googleapis.com/maps/api/geocode/json?key=" +  maps_key + "&address=" + @street_address
+
+    api_response = URI.open(url).read
+
+    parsed_data = JSON.parse(api_response)
+
+    first_result = parsed_data.fetch("results").at(0)
+    location = first_result.fetch("geometry").fetch("location")
+
+    @lat = location.fetch("lat").to_s
+
+    @lng = location.fetch("lng").to_s
+
+    pirate_weather_key = ENV.fetch("PIRATE_WEATHER_KEY")
+
+    api_url = "https://api.pirateweather.net/forecast/"+ pirate_weather_key + "/" + @lat + "," +  @lng
+    
+    api_response = URI.open(api_url).read
+    results = JSON.parse(api_response)
+
+    currently_data = results.fetch("currently")
+    @current_temperature = currently_data.fetch("temperature")
+
+    @current_summary = currently_data.fetch("summary")
+    
+    if results.has_key?("minutely")
+      @summary_of_next_sixty_minutes = results.fetch("minutely").fetch("summary")
+    else
+      @summary_of_next_sixty_minutes = "Not available"
+    end
+
+    @summary_of_next_several_hours = results.fetch("hourly").fetch("summary")
+
+    @summary_of_next_several_days = results.fetch("daily").fetch("summary")
+
+    render({ :template => "meteorologist_templates/street_to_weather_results"})
+  end
+
+  def street_to_weather_form
+    render({ :template => "meteorologist_templates/street_to_weather_form"})
+  end
+end

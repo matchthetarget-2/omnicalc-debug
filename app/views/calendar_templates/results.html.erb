@@ -1,0 +1,32 @@
+<form action="/calendar_invite/results">
+  <div>
+    <label for="">Name</label>
+    <input type="text" name="event_name" id="">
+  </div>
+  <div>
+    <label for="">Details</label>
+    <input type="text" name="event_details" id="">
+  </div>
+  <div>
+    <label for="">Location</label>
+    <input type="text" name="event_location" id="">
+  </div>
+  <div>
+    <label for="">Start time</label>
+    <input type="datetime-local" name="start_time" id="">
+  </div>
+  <div>
+    <label for="">End time</label>
+    <input type="datetime-local" name="end_time" id="">
+  </div>
+  <button>Generate</button>
+</form>
+
+<h1>Event URL</h1>
+<div>
+  <a href="<%= @invite %>">Invitation</a>
+</div>
+
+<h2>Copy me</h2>
+<textarea cols="80" rows="5"><%= @invite %></textarea>
+
